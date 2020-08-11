@@ -1,3 +1,1 @@
-function myFunction() {
-    document.getElementById("demo").innerHTML = Date();
-}
+document.body.onload = println("load");
