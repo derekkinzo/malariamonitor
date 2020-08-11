@@ -51,12 +51,12 @@
 
         <!-- Customer Scripts -->
         <script src="/static/scripts/main.js"></script>
-        <script src="/static/scripts/us-states.js"></script>
+        <script src="/static/scripts/brazil-municipalities.js"></script>
         <!-- <script src="/static/scripts/map.js"></script> -->
 
         <script type="text/javascript">
 
-            var map = L.map('map').setView([37.8, -96], 4);
+            var map = L.map('map').setView([-10, -55], 5);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 18,
@@ -76,9 +76,9 @@
             };
 
             info.update = function (props) {
-                this._div.innerHTML = '<h4>US Population Density</h4>' + (props ?
-                    '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
-                    : 'Hover over a state');
+                this._div.innerHTML = '<h4>Density</h4>' + (props ?
+                    '<b>' + props.NOME + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
+                    : 'Hover over a region');
             };
 
             info.addTo(map);
@@ -148,7 +148,7 @@
                 onEachFeature: onEachFeature
             }).addTo(map);
 
-            map.attributionControl.addAttribution('Population data &copy; <a href="http://census.gov/">US Census Bureau</a>');
+            map.attributionControl.addAttribution('Municipality data, <a href="https://github.com/tbrugz/geodata-br">Geodata Br - Brasil</a>');
 
 
             var legend = L.control({ position: 'bottomright' });
