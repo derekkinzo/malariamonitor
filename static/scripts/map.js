@@ -1,1 +1,0 @@
-document.body.onload = println("load");

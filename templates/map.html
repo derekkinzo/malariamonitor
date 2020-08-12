@@ -1,183 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Malaria Monitor Map</title>
 
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-            integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-        <link rel="stylesheet" href="/static/stylesheets/main.css">
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""
+    />
 
-        <!-- Leaflet CSS -->
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-            integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-            crossorigin="" />
+    <link rel="stylesheet" href="/static/stylesheets/map.css" />
+  </head>
 
+  <body onload="loadMap()">
+    <div id="map"></div>
+  </body>
 
-        <title>Malaria Monitor Map</title>
-    </head>
+  <!-- Include Leaflet Scripts -->
+  <script
+    src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""
+  ></script>
 
-    <body>
+  <script
+    type="text/javascript"
+    src="/static/scripts/brazil-municipalities.js"
+  ></script>
 
-        <div id="mySidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            <a href="#">Malaria Monitor</a>
-        </div>
+  <script type="text/javascript">
+    var map = L.map("map").setView([-10, -55], 5);
 
-        <div id="main">
-            <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
+    L.tileLayer(
+      "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZGVyZWtraW56byIsImEiOiJja2Rxc2R3YjExOGluMnJtaGJ0MmQ2MnZpIn0.XoWTETKSwaAjFYOPY-DlOQ",
+      {
+        maxZoom: 18,
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+          '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+          'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: "mapbox/light-v9",
+        tileSize: 512,
+        zoomOffset: -1,
+      }
+    ).addTo(map);
 
-            <div id='map'></div>
-        </div>
+    // control that shows state info on hover
+    var info = L.control();
 
-        <!-- Leaflet Javascript -->
-        <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-            integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-            crossorigin=""></script>
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-            crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-            crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-            crossorigin="anonymous"></script>
+    info.onAdd = function (map) {
+      this._div = L.DomUtil.create("div", "info");
+      this.update();
+      return this._div;
+    };
 
+    info.update = function (props) {
+      this._div.innerHTML =
+        "<h4>US Population Density</h4>" +
+        (props
+          ? "<b>" +
+            props.name +
+            "</b><br />" +
+            props.density +
+            " people / mi<sup>2</sup>"
+          : "Hover over a state");
+    };
 
-        <!-- Customer Scripts -->
-        <script src="/static/scripts/main.js"></script>
-        <script src="/static/scripts/brazil-municipalities.js"></script>
-        <!-- <script src="/static/scripts/map.js"></script> -->
+    info.addTo(map);
 
-        <script type="text/javascript">
+    // get color depending on population density value
+    function getColor(d) {
+      return d > 1000
+        ? "#800026"
+        : d > 500
+        ? "#BD0026"
+        : d > 200
+        ? "#E31A1C"
+        : d > 100
+        ? "#FC4E2A"
+        : d > 50
+        ? "#FD8D3C"
+        : d > 20
+        ? "#FEB24C"
+        : d > 10
+        ? "#FED976"
+        : "#FFEDA0";
+    }
 
-            var map = L.map('map').setView([-10, -55], 5);
+    function style(feature) {
+      return {
+        weight: 2,
+        opacity: 1,
+        color: "white",
+        dashArray: "3",
+        fillOpacity: 0.7,
+        fillColor: getColor(feature.properties.density),
+      };
+    }
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 18,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                tileSize: 512,
-                zoomOffset: -1
-            }).addTo(map);
+    function highlightFeature(e) {
+      var layer = e.target;
 
+      layer.setStyle({
+        weight: 5,
+        color: "#666",
+        dashArray: "",
+        fillOpacity: 0.7,
+      });
 
-            // control that shows state info on hover
-            var info = L.control();
+      if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
+      }
 
-            info.onAdd = function (map) {
-                this._div = L.DomUtil.create('div', 'info');
-                this.update();
-                return this._div;
-            };
+      info.update(layer.feature.properties);
+    }
 
-            info.update = function (props) {
-                this._div.innerHTML = '<h4>Density</h4>' + (props ?
-                    '<b>' + props.NOME + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
-                    : 'Hover over a region');
-            };
+    var geojson;
 
-            info.addTo(map);
+    function resetHighlight(e) {
+      geojson.resetStyle(e.target);
+      info.update();
+    }
 
+    function zoomToFeature(e) {
+      map.fitBounds(e.target.getBounds());
+    }
 
-            // get color depending on population density value
-            function getColor(d) {
-                return d > 1000 ? '#800026' :
-                    d > 500 ? '#BD0026' :
-                        d > 200 ? '#E31A1C' :
-                            d > 100 ? '#FC4E2A' :
-                                d > 50 ? '#FD8D3C' :
-                                    d > 20 ? '#FEB24C' :
-                                        d > 10 ? '#FED976' :
-                                            '#FFEDA0';
-            }
+    function onEachFeature(feature, layer) {
+      layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: zoomToFeature,
+      });
+    }
 
-            function style(feature) {
-                return {
-                    weight: 2,
-                    opacity: 1,
-                    color: 'white',
-                    dashArray: '3',
-                    fillOpacity: 0.7,
-                    fillColor: getColor(feature.properties.density)
-                };
-            }
+    geojson = L.geoJson(statesData, {
+      style: style,
+      onEachFeature: onEachFeature,
+    }).addTo(map);
 
-            function highlightFeature(e) {
-                var layer = e.target;
+    map.attributionControl.addAttribution(
+      'Population data &copy; <a href="http://census.gov/">US Census Bureau</a>'
+    );
 
-                layer.setStyle({
-                    weight: 5,
-                    color: '#666',
-                    dashArray: '',
-                    fillOpacity: 0.7
-                });
+    var legend = L.control({ position: "bottomright" });
 
-                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-                    layer.bringToFront();
-                }
+    legend.onAdd = function (map) {
+      var div = L.DomUtil.create("div", "info legend"),
+        grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+        labels = [],
+        from,
+        to;
 
-                info.update(layer.feature.properties);
-            }
+      for (var i = 0; i < grades.length; i++) {
+        from = grades[i];
+        to = grades[i + 1];
 
-            var geojson;
+        labels.push(
+          '<i style="background:' +
+            getColor(from + 1) +
+            '"></i> ' +
+            from +
+            (to ? "&ndash;" + to : "+")
+        );
+      }
 
-            function resetHighlight(e) {
-                geojson.resetStyle(e.target);
-                info.update();
-            }
+      div.innerHTML = labels.join("<br>");
+      return div;
+    };
 
-            function zoomToFeature(e) {
-                map.fitBounds(e.target.getBounds());
-            }
-
-            function onEachFeature(feature, layer) {
-                layer.on({
-                    mouseover: highlightFeature,
-                    mouseout: resetHighlight,
-                    click: zoomToFeature
-                });
-            }
-
-            geojson = L.geoJson(statesData, {
-                style: style,
-                onEachFeature: onEachFeature
-            }).addTo(map);
-
-            map.attributionControl.addAttribution('Municipality data, <a href="https://github.com/tbrugz/geodata-br">Geodata Br - Brasil</a>');
-
-
-            var legend = L.control({ position: 'bottomright' });
-
-            legend.onAdd = function (map) {
-
-                var div = L.DomUtil.create('div', 'info legend'),
-                    grades = [0, 10, 20, 50, 100, 200, 500, 1000],
-                    labels = [],
-                    from, to;
-
-                for (var i = 0; i < grades.length; i++) {
-                    from = grades[i];
-                    to = grades[i + 1];
-
-                    labels.push(
-                        '<i style="background:' + getColor(from + 1) + '"></i> ' +
-                        from + (to ? '&ndash;' + to : '+'));
-                }
-
-                div.innerHTML = labels.join('<br>');
-                return div;
-            };
-
-            legend.addTo(map);
-
-        </script>
-
-
-    </body>
-
+    legend.addTo(map);
+  </script>
 </html>
