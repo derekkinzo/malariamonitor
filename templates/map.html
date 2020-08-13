@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="/static/stylesheets/map.css" />
   </head>
 
-  <body onload="loadMap()">
+  <body>
     <div id="map"></div>
   </body>
 
@@ -30,11 +30,6 @@
     src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
     integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
     crossorigin=""
-  ></script>
-
-  <script
-    type="text/javascript"
-    src="/static/scripts/brazil-municipalities.js"
   ></script>
 
   <script type="text/javascript">
@@ -143,10 +138,15 @@
       });
     }
 
-    geojson = L.geoJson(statesData, {
-      style: style,
-      onEachFeature: onEachFeature,
-    }).addTo(map);
+    fetch("api/map")
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        geojson = L.geoJson(statesData, {
+          style: style,
+          onEachFeature: onEachFeature,
+        }).addTo(map);
+      });
 
     map.attributionControl.addAttribution(
       'Population data &copy; <a href="http://census.gov/">US Census Bureau</a>'
