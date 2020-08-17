@@ -27,10 +27,20 @@ jobs:
         uses: zxyle/publish-gae-action@v2.3
         with:
           # The service account email which will be used for authentication.
-          service_account_email: derekkinzo@gmail.com
+          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
           # The service account key which will be used for authentication.
           service_account_key: ${{ secrets.GCLOUD_AUTH }}
           # GAE project id
-          project_id: malariamonitor
+          project_id: ${{ secrets.PROJECT_ID }}
           # GAE variables to be written to the app.yaml file
-          gae_variables: # optional
+          gae_variables: ${{ secrets.GAE_VARIABLES }}
+          
+      - name: Publish app to Google App Engine
+        run: |
+          # This client-secret.json is converted by GCLOUD_AUTH.
+          gcloud auth activate-service-account ${{ secrets.GCP_SA_EMAIL }} --key-file=client-secret.json
+          gcloud config set project ${{ secrets.PROJECT_ID }}
+          gcloud -q app deploy app.yaml --promote
+
+          # Suppose you need a cron task.
+          gcloud -q app deploy cron.yaml
