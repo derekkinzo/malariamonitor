@@ -99,7 +99,7 @@ function getColor(d) {
  * @param {google.maps.Data.Feature} feature
  */
 function styleFeature(feature) {
-  var delta = feature.getProperty("ID_UF");
+  // var delta = feature.getProperty("GEOCODIGO");
 
   // determine whether to show this shape or not
   var showRow = true;
@@ -153,21 +153,25 @@ function loadGeoJson() {
   map.data.loadGeoJson(
     "/static/brazil-municipalities.json",
     {
-      idPropertyName: "ID_UF",
+      idPropertyName: "GEOCODIGO",
     },
     loadMalariaData
   );
 }
 
-let malariaData = {
-  12: 90,
-  13: 400,
-};
+function getDensity(geocode, malariaData) {
+  const found = malariaData.find((element) => element.geocode === geocode);
+  return found.density;
+}
 
 function loadMalariaData(features) {
-  features.forEach((feature) => {
-    feature.setProperty("density", malariaData[feature.o]);
-  });
+  fetch("api/municipalities")
+    .then((response) => response.json())
+    .then((malariaData) => {
+      features.forEach((feature) => {
+        feature.setProperty("density", getDensity(feature.o, malariaData));
+      });
+    });
 }
 
 // Append the 'script' element to 'head'

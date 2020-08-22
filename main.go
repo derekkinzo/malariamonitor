@@ -11,7 +11,7 @@ import (
 
 func main() {
 	http.HandleFunc("/api/map", mapAPI)
-	http.HandleFunc("/articles", allArticles)
+	http.HandleFunc("/api/municipalities", allMunicipalities)
 	http.HandleFunc("/", mapHandler)
 	http.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("./static"))))
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -32,21 +32,21 @@ func mapHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//Article is an example json struct
-type Article struct {
-	Title   string `json:"Title"`
-	Desc    string `json:"dec"`
-	Content string `json:"content"`
+//Municipality is an example json struct
+type Municipality struct {
+	Geocode int `json:"geocode"`
+	Density int `json:"density"`
 }
 
-//Articles is an array of Article
-type Articles []Article
+//Municipalities is an array of Article
+type Municipalities []Municipality
 
-func allArticles(w http.ResponseWriter, r *http.Request) {
-	articles := Articles{
-		Article{Title: "Test title", Desc: "Test desc", Content: "Test content"},
+func allMunicipalities(w http.ResponseWriter, r *http.Request) {
+	articles := Municipalities{
+		Municipality{Geocode: 1200336, Density: 90},
+		Municipality{Geocode: 1300201, Density: 400},
 	}
-	fmt.Println("Endpoint hit: All articles")
+	fmt.Println("Endpoint hit: All municipalities")
 	json.NewEncoder(w).Encode(articles)
 }
 
