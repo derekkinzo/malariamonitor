@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -51,6 +50,7 @@ func allMunicipalities(w http.ResponseWriter, r *http.Request) {
 }
 
 func mapAPI(w http.ResponseWriter, r *http.Request) {
-	geojson, _ := ioutil.ReadFile("./static/brazil-municipalities.json")
-	fmt.Fprintf(w, string(geojson))
+	// geojson, _ := ioutil.ReadFile("./static/brazil-municipalities.json")
+	// fmt.Fprintf(w, string(geojson))
+	fmt.Fprintf(w, "geojson data")
 }
