@@ -70,6 +70,7 @@ window.initMap = function () {
   map.data.setStyle(styleFeature);
   map.data.addListener("mouseover", mouseInToRegion);
   map.data.addListener("mouseout", mouseOutOfRegion);
+  map.data.addListener("click", zoomToFeature);
 };
 
 // get color depending on population density value
@@ -139,6 +140,27 @@ function styleFeature(feature) {
     fillOpacity: 0.75,
     visible: showRow,
   };
+}
+
+function processPoints(geometry, callback, thisArg) {
+  if (geometry instanceof google.maps.LatLng) {
+    callback.call(thisArg, geometry);
+  } else if (geometry instanceof google.maps.Data.Point) {
+    callback.call(thisArg, geometry.get());
+  } else {
+    geometry.getArray().forEach(function (g) {
+      processPoints(g, callback, thisArg);
+    });
+  }
+}
+
+function zoomToFeature(e) {
+  console.log(e.feature.getGeometry());
+  var bounds = new google.maps.LatLngBounds();
+  processPoints(e.feature.getGeometry(), bounds.extend, bounds);
+
+  map.setCenter(bounds.getCenter());
+  map.fitBounds(bounds);
 }
 
 function mouseInToRegion(e) {
