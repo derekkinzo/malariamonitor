@@ -34,8 +34,8 @@ func mapHandler(w http.ResponseWriter, r *http.Request) {
 
 //Municipality is an example json struct
 type Municipality struct {
-	Geocode int `json:"geocode"`
-	Density int `json:"density"`
+	Geocode string `json:"geocode"`
+	Density int    `json:"density"`
 }
 
 //Municipalities is an array of Article
@@ -43,8 +43,8 @@ type Municipalities []Municipality
 
 func allMunicipalities(w http.ResponseWriter, r *http.Request) {
 	articles := Municipalities{
-		Municipality{Geocode: 1200336, Density: 90},
-		Municipality{Geocode: 1300201, Density: 400},
+		Municipality{Geocode: "1200336", Density: 90},
+		Municipality{Geocode: "1300201", Density: 400},
 	}
 	fmt.Println("Endpoint hit: All municipalities")
 	json.NewEncoder(w).Encode(articles)

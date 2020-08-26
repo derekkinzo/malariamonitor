@@ -124,7 +124,9 @@ function styleFeature(feature) {
     document.getElementById("info").innerHTML =
       "<h4>US Population Density</h4>" +
       "<b>" +
-      feature.getProperty("name") +
+      feature.getProperty("NOME") +
+      "</b><br />" +
+      feature.getProperty("GEOCODIGO") +
       "</b><br />" +
       feature.getProperty("density") +
       " people / mi<sup>2</sup>";
@@ -172,8 +174,18 @@ function mouseOutOfRegion(e) {
 }
 
 function loadGeoJson() {
+  const geoJsonDir = "/static/geojson/";
+
   map.data.loadGeoJson(
-    "/static/brazil-municipalities.json",
+    geoJsonDir + "AC.min.json",
+    {
+      idPropertyName: "GEOCODIGO",
+    },
+    loadMalariaData
+  );
+
+  map.data.loadGeoJson(
+    geoJsonDir + "AM.min.json",
     {
       idPropertyName: "GEOCODIGO",
     },
@@ -183,15 +195,29 @@ function loadGeoJson() {
 
 function getDensity(geocode, malariaData) {
   const found = malariaData.find((element) => element.geocode === geocode);
-  return found.density;
+  if (found != null) {
+    return found.density;
+  } else {
+    return null;
+  }
 }
 
 function loadMalariaData(features) {
   fetch("api/municipalities")
     .then((response) => response.json())
     .then((malariaData) => {
+      console.log(malariaData);
       features.forEach((feature) => {
-        feature.setProperty("density", getDensity(feature.o, malariaData));
+        let density = getDensity(feature.o, malariaData);
+        if (density !== null) {
+          feature.setProperty("density", density);
+          console.log(
+            "Setting density of " +
+              feature.getProperty("NOME") +
+              " to " +
+              feature.getProperty("density")
+          );
+        }
       });
     });
 }
